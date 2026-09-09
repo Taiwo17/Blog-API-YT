@@ -1,23 +1,14 @@
+import 'dotenv/config'
 import express from 'express'
-import dotenv from 'dotenv'
 
 import { connectDB } from './database/database.js'
 import routes from './routes/index.js'
 
 const server = express()
-const port = 4000
+const port = process.env.PORT || 5000
 
-// Express inbuilt method
 server.use(express.json())
 server.use(express.urlencoded({ extended: true }))
-
-// Environment variable
-dotenv.config()
-
-// Database configuration
-connectDB()
-  .then(() => console.log('Database connected'))
-  .catch((err) => console.log(err.message))
 
 server.get('/', (req, res) => {
   res.status(200).json({
@@ -27,16 +18,35 @@ server.get('/', (req, res) => {
 
 server.use(routes)
 
-// Handle Undefined Routes
 server.use((req, res) => {
-  res.status(404).json({ success: false, message: 'Route not found' })
+  res.status(404).json({
+    success: false,
+    message: 'Route not found',
+  })
 })
 
-// Error Handling Middleware
 server.use((err, req, res, next) => {
-  res
-    .status(err.status || 500)
-    .json({ success: false, message: err.message || 'Internal Server Error' })
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Internal Server Error',
+  })
 })
 
-server.listen(port, () => console.log(`Server is listening on port ${port}`))
+const startServer = async () => {
+  try {
+    await connectDB()
+
+    server.listen(port, '0.0.0.0', () => {
+      console.log(`Server is listening on port ${port}`)
+    })
+  } catch (error) {
+    console.error('Application failed to start:', error.message)
+    process.exit(1)
+  }
+}
+
+if (process.env.NODE_ENV !== 'test') {
+  startServer()
+}
+
+export default server
