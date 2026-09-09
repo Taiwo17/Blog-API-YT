@@ -1,0 +1,38 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - '5000:5000'
+    env_file:
+      - .env
+    environment:
+      DATABASE: mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@taiwo-shobo.bxf4o.mongodb.net/${MONGO_DB}?appName=taiwo-shobo
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mongo:8
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_ROOT_DB: ${MONGO_DB}
+    ports:
+      - '27017:27017'
+    volumes:
+      - app_mongodb_data:/data/db
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'mongosh --quiet --username "$${MONGO_INITDB_ROOT_USERNAME}" --password "$${MONGO_INITDB_ROOT_PASSWORD}" --authenticationDatabase admin --eval "db.adminCommand(''ping'')"',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+volumes:
+  app_mongodb_data:
