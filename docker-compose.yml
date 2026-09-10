@@ -3,11 +3,11 @@ services:
     image: ${DOCKERHUB_USERNAME}/blog_api:${IMAGE_TAG:-latest}
     restart: unless-stopped
     ports:
-      - '5000:5000'
+      - '50000978440:5000'
     env_file:
       - .env
     environment:
-      DATABASE: mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@taiwo-shobo.bxf4o.mongodb.net/${MONGO_DB}?appName=taiwo-shobo
+      DATABASE: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@db:27017/${MONGO_DB}?authSource=admin
     depends_on:
       db:
         condition: service_healthy
@@ -18,7 +18,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-      MONGO_INITDB_ROOT_DB: ${MONGO_DB}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
     volumes:
       - app_mongodb_data:/data/db
     healthcheck:
