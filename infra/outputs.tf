@@ -23,3 +23,9 @@ output "ssh_command" {
   description = "Command used to connect through SSH"
   value       = "ssh -i ~/.ssh/blog_api_key.pem ec2-user@${aws_instance.app_server.public_ip}"
 }
+
+
+output "github_deploy_role_arn" {
+  description = "IAM role assumed by GitHub Action"
+  value       = aws_iam_role.github_deploy.arn
+}
