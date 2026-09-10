@@ -114,6 +114,7 @@ jobs:
                     --comment "Deploy Blog API commit $GITHUB_SHA" \
                     --parameters "commands=[
                       \"set -e\",
+                      \"export HOME=/root\",
                       \"cd /opt/blog-api\",
                       \"git config --global --add safe.directory /opt/blog-api\",
                       \"git pull --ff-only origin master\",
