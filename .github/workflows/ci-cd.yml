@@ -123,11 +123,9 @@ jobs:
                       \"cd /opt/blog-api\",
                       \"git config --global --add safe.directory /opt/blog-api\",
                       \"git pull --ff-only origin master\",
-                      \"docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN\",
+                      \"echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin\",
                       \"IMAGE_TAG=$IMAGE_TAG DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME docker compose pull app\",
                       \"IMAGE_TAG=$IMAGE_TAG DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME docker compose up -d --remove-orphans\",
-                      \"IMAGE_TAG=$IMAGE_TAG docker compose pull app\",
-                      \"IMAGE_TAG=$IMAGE_TAG docker compose up -d --remove-orphans\",
                       \"docker compose ps\",
                       \"curl --fail --retry 10 --retry-delay 3 http://localhost:5000\"
                       ]"\
