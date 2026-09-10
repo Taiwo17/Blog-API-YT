@@ -107,6 +107,7 @@ jobs:
               env:
                   INSTANCE_ID: ${{ vars.EC2_INSTANCE_ID }}
                   IMAGE_TAG: sha-${{ github.sha }}
+                  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
               run: |
                   COMMAND_ID=$(aws ssm send-command \
                     --instance-ids "$INSTANCE_ID" \
@@ -115,6 +116,8 @@ jobs:
                     --parameters "commands=[
                       \"set -e\",
                       \"export HOME=/root\",
+                      \"export DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME\",
+                      \"export IMAGE_TAG=$IMAGE_TAG\",
                       \"cd /opt/blog-api\",
                       \"git config --global --add safe.directory /opt/blog-api\",
                       \"git pull --ff-only origin master\",
